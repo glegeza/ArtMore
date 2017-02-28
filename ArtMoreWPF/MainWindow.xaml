@@ -1,0 +1,92 @@
+﻿<Window x:Class="ArtMoreWPF.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ArtMoreWPF"
+        xmlns:core="clr-namespace:System;assembly=mscorlib"
+        mc:Ignorable="d"
+        Title="Art More" Height="720" Width="1280">
+
+    <Window.DataContext>
+        <local:MainViewModel />
+    </Window.DataContext>
+
+    <Window.Resources>
+
+        <core:Double x:Key="Minute">60</core:Double>
+        <core:Double x:Key="Hour">3600</core:Double>
+        <core:Double x:Key="NegativeMinute">-60</core:Double>
+        <core:Double x:Key="NegativeHour">-3600</core:Double>
+
+
+        <DataTemplate x:Key="FileRecordTemplate">
+            <StackPanel Orientation="Horizontal">
+                <Image Width="100" Height="120" Margin="0 0 10 0" Source="{Binding Thumbnail}"/>
+                <StackPanel Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Left">
+                    <TextBlock Margin="0 0 0 10" Foreground="LightGray" Text="{Binding Name}" />
+                    <TextBlock Margin="0 0 0 10" Foreground="LightGray" Text="{Binding Path}" />
+                    <TextBlock Margin="0 0 0 10" Foreground="LightGray" Text="{Binding PrettyWorkTime}" />
+                    <TextBlock Margin="0 0 0 10" Foreground="LightGray" Text="{Binding PrettyTargetTime}" />
+                </StackPanel>
+            </StackPanel>
+        </DataTemplate>
+    </Window.Resources>
+
+    <DockPanel>
+        <ListView Name="_list" AllowDrop="True" Drop="OnFileDrop" SelectionMode="Single" DockPanel.Dock="Left" Background="DarkSlateGray" Width="300" BorderThickness="0" ItemsSource="{Binding FileList}" ItemTemplate="{StaticResource FileRecordTemplate}" SelectedItem="{Binding CurrentRecord, Mode=TwoWay}" >
+            <ListView.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Delete record" Command="{Binding DeleteSelectedRecordCommand}" />
+                    <MenuItem Header="Open in explorer" Command="{Binding OpenSelectedRecordPath}" />
+                    <MenuItem Header="Open file" Command="{Binding OpenSelectedRecordFile}" />
+                    <MenuItem Header="Change file" Command="{Binding ChangeFileRecordPath}" />
+                </ContextMenu>
+            </ListView.ContextMenu>
+            <ListView.InputBindings>
+                <KeyBinding Key="Delete" Command="{Binding DeleteSelectedRecordCommand}" />
+                <KeyBinding Key="Return" Command="{Binding OpenSelectedRecordFile}" />
+            </ListView.InputBindings>
+        </ListView>
+
+        <StatusBar DockPanel.Dock="Bottom" Height="20" HorizontalAlignment="Stretch">
+            <StatusBar.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="250" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                    </Grid>
+                </ItemsPanelTemplate>
+            </StatusBar.ItemsPanel>
+            <StatusBarItem Grid.Column="0">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Total Art Time: " FontFamily="Consolas" FontSize="12" />
+                    <TextBlock Text="{Binding TotalArtTime}" FontFamily="Consolas" FontSize="12" />
+                </StackPanel>
+            </StatusBarItem>
+            <StatusBarItem Grid.Column="1" HorizontalAlignment="Right" Margin="0 0 4 0">
+                <ProgressBar Width="180" Height="12" Value="{Binding TimerModel.RemainingTimePercent, Mode=OneWay}" HorizontalAlignment="Right" />
+            </StatusBarItem>
+        </StatusBar>
+        
+        <Grid>
+            <StackPanel Orientation="Vertical" Width="500" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <TextBlock DataContext="{Binding Path=TimerModel}" Text="{Binding CurrentTimerString}" FontFamily="Consolas" FontSize="72" Width="500" TextAlignment="Center" HorizontalAlignment="Center" FontWeight="Bold"/>
+                <StackPanel DataContext="{Binding Path=TimerModel}" Orientation="Horizontal" HorizontalAlignment="Center" Height="40">
+                    <Button Content="Start" IsEnabled="{Binding CanStartTimer}" Command="{Binding StartTimer}" Width="100" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0 0 10 0" />
+                    <Button Content="End"   IsEnabled="{Binding CanEndTimer}"   Command="{Binding EndTimer}"   Width="100" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                </StackPanel>
+                <TextBlock Text="{Binding TimerModel.RemainingTimeString}" Margin="0 20 0 0" FontFamily="Consolas" FontSize="20" HorizontalAlignment="Center"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Height="30">
+                    <Button x:Name="_plusHour"    Content="+Hour"   Width="60" Height="18" Padding="0,0,0,0" Margin="0 0 4 0" Command="{Binding TargetTimeModel.AddTimeToTarget}" CommandParameter="{StaticResource Hour}" />
+                    <Button x:Name="_plusMinute"  Content="+Minute" Width="60" Height="18" Padding="0,0,0,0" Margin="0 0 4 0" Command="{Binding TargetTimeModel.AddTimeToTarget}" CommandParameter="{StaticResource Minute}"/>
+                    <Button x:Name="_reset"       Content="Reset"   Width="60" Height="18" Padding="0,0,0,0" Margin="0 0 4 0" Command="{Binding TargetTimeModel.ResetTarget}" />
+                    <Button x:Name="_minusMinute" Content="-Minute" Width="60" Height="18" Padding="0,0,0,0" Margin="0 0 4 0" Command="{Binding TargetTimeModel.AddTimeToTarget}" CommandParameter="{StaticResource NegativeMinute}"/>
+                    <Button x:Name="_minusHour"   Content="-Hour"   Width="60" Height="18" Padding="0,0,0,0" Margin="0 0 4 0" Command="{Binding TargetTimeModel.AddTimeToTarget}" CommandParameter="{StaticResource NegativeHour}" />
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+    </DockPanel>
+</Window>
