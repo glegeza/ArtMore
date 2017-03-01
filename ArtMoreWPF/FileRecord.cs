@@ -27,14 +27,7 @@
             _timeWorked = loadedRecord.WorkTime;
             _targetTime = loadedRecord.TargetTime;
             _id = Guid.Parse(loadedRecord.ID);
-            try
-            {
-                _thumbnail = new BitmapImage(new Uri(_path));
-            }
-            catch (Exception e)
-            {
-
-            }
+            SetThumbnail();
         }
 
         public FileRecord(string path)
@@ -44,6 +37,7 @@
             _timeWorked = 0.0;
             _targetTime = 0.0;
             _id = Guid.NewGuid();
+            SetThumbnail();
         }
 
         public string Name
