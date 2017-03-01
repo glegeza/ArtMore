@@ -35,6 +35,21 @@
 
     <DockPanel>
         <ListView Name="_list" AllowDrop="True" Drop="OnFileDrop" SelectionMode="Single" DockPanel.Dock="Left" Background="DarkSlateGray" Width="300" BorderThickness="0" ItemsSource="{Binding FileList}" ItemTemplate="{StaticResource FileRecordTemplate}" SelectedItem="{Binding CurrentRecord, Mode=TwoWay}" >
+            <ListView.ItemContainerStyle>
+                <Style TargetType="{x:Type ListViewItem}">
+                    <Style.Triggers>
+                        <EventTrigger RoutedEvent="Loaded">
+                            <EventTrigger.Actions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.5" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger.Actions>
+                        </EventTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ListView.ItemContainerStyle>
             <ListView.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="Delete record" Command="{Binding DeleteSelectedRecordCommand}" />
